@@ -1,0 +1,50 @@
+set -e
+
+echo "Hi, I'll help you retrieve your change set and put it in github :)"
+echo "Please enter your sandbox alias :"
+read alias
+echo ${alias}
+
+echo "Please enter the name of the change set :"
+read changeset
+
+echo Please enter the name of your user story [e.g FCX-2039 FCX-2039-2040-2042]
+read usName
+
+#echo Stashing current changes...
+#git add .
+#git stash
+#echo Your current changes are stashed successfully!
+
+echo Checkout to development branch
+git checkout development
+echo Checkout to development branch is successful!
+
+echo Pulling from remote  development branch
+git pull origin development 
+echo Changes pulled from development successfully!
+
+echo Creating the feature branch "Feature-${usName}"
+git checkout -b "Feature-${usName}"
+echo Feature branch "Feature-${usName}" is created successfully!
+
+
+echo Retrieving the change set...
+sfdx force:mdapi:retrieve -w 20 -u ${alias} -p "${changeset}" -r .
+echo Your change set is retrieved Successfully!
+
+echo Unpackaging the change set
+unzip unpackaged.zip
+echo Your change set is unpackaged successfully!
+
+echo Converting your package...
+sfdx force:mdapi:convert -r "${changeset}"
+echo Your change set is converted successfully!
+
+echo Removing the change set package folder
+rm -r "${changeset}"
+rm -f unpackaged.zip
+echo Package folder removed successfully!
+
+echo You can now proceed to solve duplicates or commit
+git status

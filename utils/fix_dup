@@ -1,0 +1,34 @@
+echo Started including duplicate files
+
+#Started merging 
+base_filename='files-all.txt'
+tmp_file='tmpfile.txt'
+echo Start
+
+find . -type f -path './force-app/*' > $base_filename
+
+touch "${tmp_file}";
+
+while read line; do
+  extension="${line##*.}"
+  filename="${line%.*}"
+  if [[ $extension == "dup" ]]; 
+  then
+  git merge-file "$filename" "$tmp_file" "$line"
+  rm "$line"
+  fi
+done < $base_filename
+rm "$base_filename"
+rm "$tmp_file"
+#End of merging
+
+echo Duplicated files are included successfully! You may still need to solve merge conflicts before commiting
+git status
+
+
+
+  
+
+
+
+
